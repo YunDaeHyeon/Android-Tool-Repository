@@ -33,11 +33,13 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
     private final String TAG = "PairingActivity";
     // 뒤로가기 버튼 설정을 위한 시간
     private long backKeyPressedTime = 0;
+    // 테스트 블루투스 연결 변수
+    boolean test = true;
     List<String> pairingList;
     List<String> bluetoothList;
     // 리스트뷰, 버튼, 텍스트뷰 선언
     ListView pairing_listview, bluetooth_listview;
-    Button pairingSearchBtn, bluetoothSearchBtn, cancelButton;
+    Button pairingSearchBtn, bluetoothSearchBtn, cancelButton, testBtn;
     TextView statusText;
     // 블루투스 어뎁터 선언
     BluetoothAdapter bluetoothAdapter;
@@ -64,6 +66,7 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
         pairingSearchBtn = (Button) findViewById(R.id.pairingSearchBtn); // 페어링 목록 검색 버튼
         bluetoothSearchBtn = (Button) findViewById(R.id.bluetoothSearchBtn); // 주변 블루투스 기기 검색 버튼
         cancelButton = (Button) findViewById(R.id.cancelButton); // 뒤로가기 버튼
+        testBtn = (Button) findViewById(R.id.testBtn); // 안드로이드 -> 아두이노 테스트 버튼
         statusText = (TextView) findViewById(R.id.statusText); // 텍스트뷰
 
         // 블루투스 객체 호출
@@ -87,6 +90,7 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
         cancelButton.setOnClickListener(this); // 취소 버튼 클릭
         pairingSearchBtn.setOnClickListener(this); // 페어링 검색 버튼 클릭
         bluetoothSearchBtn.setOnClickListener(this); // 블루투스 검색 버튼 클릭
+        testBtn.setOnClickListener(this); // 안드로이드 -> 아두이노 데이터 전송 테스트
         pairing_listview.setOnItemClickListener(new bluetoothContectedClickListener()); // 페어링 리스트뷰 아이템 클릭
     }
 
@@ -136,6 +140,18 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
                         registerReceiver(receiver, filter);
                     } else { // 블루투스가 꺼져있다면
                         Toast.makeText(getApplicationContext(), "블루투스가 꺼져있습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            case R.id.testBtn:
+                // 만약, 쓰레드 객체가 생성되어 있다면, (소켓이 정상적으로 생성되었고, 프로토콜 연결이 되어있다면)
+                if(connectedThread!=null){
+                    if(test){
+                        connectedThread.write("true");
+                        test = false;
+                    }else if(test == false){
+                        connectedThread.write("false");
+                        test = true;
                     }
                 }
                 break;
