@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="페어링된 기기 목록"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="100dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/pairingSearchBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="페어링 목록 검색" />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/pairing_listview"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="주변 블루투스 기기"
+                android:layout_marginRight="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/bluetoothSearchBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="주변 기기 검색" />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/bluetooth_listview"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:text="뒤로가기"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
