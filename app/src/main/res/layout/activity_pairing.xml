@@ -80,7 +80,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/cancelButton"
+            android:id="@+id/backButton"
             android:text="뒤로가기"
             android:layout_marginRight="100dp"
             android:gravity="center_horizontal"

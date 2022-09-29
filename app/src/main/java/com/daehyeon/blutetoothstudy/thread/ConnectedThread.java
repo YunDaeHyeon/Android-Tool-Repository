@@ -1,5 +1,7 @@
 package com.daehyeon.blutetoothstudy.thread;
 
+import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.os.SystemClock;
 import android.util.Log;
@@ -7,7 +9,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 public class ConnectedThread extends Thread{
 
@@ -15,11 +16,14 @@ public class ConnectedThread extends Thread{
     private final InputStream inputStream; // InputStream 객체 선언
     private final OutputStream outputStream; // OutputStream 객체 선언
 
+    BluetoothAdapter bluetoothAdapter;
+
     // 생성자
     public ConnectedThread(BluetoothSocket socket){
         this.socket = socket;
         InputStream tempInputStream = null;
         OutputStream tempOutputStream = null;
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try{
             tempInputStream = socket.getInputStream();
             tempOutputStream = socket.getOutputStream();
@@ -31,10 +35,11 @@ public class ConnectedThread extends Thread{
     }
 
     // 쓰레드 시작
+    @SuppressLint("MissingPermission")
     @Override
     public void run() {
         // 블루투스 검색 취소 (블루투스 소켓 연결 전에 항상 해야하는 작업, 그렇지 않으면 성능 저하 발생)
-        // bluetoothAdapter.cancelDiscovery();
+        bluetoothAdapter.cancelDiscovery();
         byte[] buffer = new byte[1024];
         int bytes;
         while(true){

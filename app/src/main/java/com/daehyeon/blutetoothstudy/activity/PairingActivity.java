@@ -1,4 +1,4 @@
-package com.daehyeon.blutetoothstudy;
+package com.daehyeon.blutetoothstudy.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daehyeon.blutetoothstudy.R;
 import com.daehyeon.blutetoothstudy.thread.ConnectedThread;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
     List<String> bluetoothList;
     // 리스트뷰, 버튼, 텍스트뷰 선언
     ListView pairing_listview, bluetooth_listview;
-    Button pairingSearchBtn, bluetoothSearchBtn, cancelButton, testBtn;
+    Button pairingSearchBtn, bluetoothSearchBtn, backButton, testBtn;
     TextView statusText;
     // 블루투스 어뎁터 선언
     BluetoothAdapter bluetoothAdapter;
@@ -65,7 +66,7 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
         bluetooth_listview = (ListView) findViewById(R.id.bluetooth_listview); // 주변 블루투스 기기들을 뿌려주는 리스트뷰
         pairingSearchBtn = (Button) findViewById(R.id.pairingSearchBtn); // 페어링 목록 검색 버튼
         bluetoothSearchBtn = (Button) findViewById(R.id.bluetoothSearchBtn); // 주변 블루투스 기기 검색 버튼
-        cancelButton = (Button) findViewById(R.id.cancelButton); // 뒤로가기 버튼
+        backButton = (Button) findViewById(R.id.backButton); // 뒤로가기 버튼
         testBtn = (Button) findViewById(R.id.testBtn); // 안드로이드 -> 아두이노 테스트 버튼
         statusText = (TextView) findViewById(R.id.statusText); // 텍스트뷰
 
@@ -87,7 +88,7 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
         bluetooth_listview.setAdapter(_bluetoothAdapter);
 
         // 버튼 클릭 이벤트 지정
-        cancelButton.setOnClickListener(this); // 취소 버튼 클릭
+        backButton.setOnClickListener(this);
         pairingSearchBtn.setOnClickListener(this); // 페어링 검색 버튼 클릭
         bluetoothSearchBtn.setOnClickListener(this); // 블루투스 검색 버튼 클릭
         testBtn.setOnClickListener(this); // 안드로이드 -> 아두이노 데이터 전송 테스트
@@ -99,10 +100,9 @@ public class PairingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.cancelButton:
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            case R.id.backButton:
+                Intent intent = new Intent(getApplicationContext(), BluetoothActivity.class);
                 startActivity(intent);
-                finish(); // 액티비티 종료
                 break;
             case R.id.pairingSearchBtn: // 페어링 검색 버튼 클릭 시
                 pairingAdapter.clear(); // 페어링 ArrayAdapter 초기화

@@ -1,4 +1,4 @@
-package com.daehyeon.blutetoothstudy;
+package com.daehyeon.blutetoothstudy.activity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -15,13 +15,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private final String TAG = "MainActivity";
+import com.daehyeon.blutetoothstudy.R;
+
+public class BluetoothActivity extends AppCompatActivity implements View.OnClickListener{
+    private final String TAG = "BluetoothActivity";
     // 뒤로가기 버튼 설정을 위한 시간
     private long backKeyPressedTime = 0;
     // 블루투스 객체 선언
     BluetoothAdapter bluetoothAdapter;
-    Button bluetoothOnBtn, bluetoothOffBtn, pairingBtn;
+    Button bluetoothOnBtn, bluetoothOffBtn, pairingBtn, backButton;
 
     // 퍼미션 허용 (위치 권환을 허용시키기 위함.)
     String[] permission_list = {
@@ -32,12 +34,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_bluetooth);
         // 위치 권한 허용
-        ActivityCompat.requestPermissions(MainActivity.this, permission_list, 1);
+        ActivityCompat.requestPermissions(BluetoothActivity.this, permission_list, 1);
         bluetoothOnBtn = (Button) findViewById(R.id.bluetoothOnBtn);
         bluetoothOffBtn = (Button) findViewById(R.id.bluetoothOffBtn);
         pairingBtn = (Button) findViewById(R.id.pairingBtn);
+        backButton = (Button) findViewById(R.id.backButton);
 
         // 블루투스 getDefaultAdapter 메서드를 통해 모듈 호출
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bluetoothOnBtn.setOnClickListener(this);
         bluetoothOffBtn.setOnClickListener(this);
         pairingBtn.setOnClickListener(this);
+        backButton.setOnClickListener(this);
     }
 
     private ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
@@ -92,12 +96,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // 블루투스가 켜있을 때
                 if(bluetoothAdapter.isEnabled()){
                     Log.d(TAG, "블루투스 활성화 상태");
-                    Intent pairingIntent = new Intent(MainActivity.this, PairingActivity.class);
+                    Intent pairingIntent = new Intent(BluetoothActivity.this, PairingActivity.class);
                     startActivity(pairingIntent);
                     finish();
                 }else{
                     Toast.makeText(getApplicationContext(), "블루투스가 꺼져있습니다.", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.backButton:
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish(); // 액티비티 종료
                 break;
         }
     }

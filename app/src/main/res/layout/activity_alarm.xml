@@ -9,8 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Android 코드 모음"
-        android:textSize="25dp"
+        android:text="현재 위치 : AlarmActivity"
         android:textColor="@color/black"/>
 
     <LinearLayout
@@ -21,34 +20,30 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/bluetoothActivityButton"
-            android:text="블루투스"/>
+            android:id="@+id/basicAlarmButton"
+            android:text="기본 알람"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/alarmActivityButton"
-            android:text="알람 / 푸쉬"
+            android:text="시간 설정 알람"
             android:layout_marginLeft="15dp"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/backButton"
+            android:text="뒤로가기"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/splashActivityButton"
-            android:text="스플래쉬"/>
+            android:layout_height="wrap_content" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/test2"
-            android:text="공사중"
-            android:layout_marginLeft="15dp"/>
     </LinearLayout>
+
 
 </LinearLayout>
