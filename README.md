@@ -24,21 +24,31 @@
 │  │              │      PairingActivity.java
 │  │              │      SplashActivity.java
 │  │              │
+│  │              ├─fragment
+│  │              │      TimePickerFragment.java
+│  │              │
+│  │              ├─helper
+│  │              │      NotificationHelper.java
+│  │              │
+│  │              ├─receiver
+│  │              │      AlertReceiver.java
+│  │              │
 │  │              └─thread
 │  │                      ConnectedThread.java
 │  │
 │  └─res
+│      ├─drawable
+│      │      ic_launcher_background.xml
+│      │
+│      ├─drawable-v24
+│      │      ic_launcher_foreground.xml
+│      │
 │      ├─layout
 │      │      activity_alarm.xml
 │      │      activity_bluetooth.xml
 │      │      activity_main.xml
 │      │      activity_pairing.xml
 │      │      activity_splash.xml
-│      │
-│      ├─values
-│      │      colors.xml
-│      │      strings.xml
-│      │      themes.xml
 
 아두이노
 ├─Arduino
