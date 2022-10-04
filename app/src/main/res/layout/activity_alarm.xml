@@ -10,6 +10,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="현재 위치 : AlarmActivity"
+        android:layout_marginBottom="25dp"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginBottom="25dp"
+        android:text="알람을 설정해주세요."
+        android:id="@+id/settingAlarmText"
         android:textColor="@color/black"/>
 
     <LinearLayout
@@ -23,11 +33,25 @@
             android:id="@+id/basicAlarmButton"
             android:text="기본 알람"/>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/alarmActivityButton"
-            android:text="시간 설정 알람"
+            android:id="@+id/alarmStartButton"
+            android:text="알람 설정"
+            android:layout_marginLeft="15dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/alarmCancelButton"
+            android:text="알람 취소"
             android:layout_marginLeft="15dp"/>
     </LinearLayout>
 

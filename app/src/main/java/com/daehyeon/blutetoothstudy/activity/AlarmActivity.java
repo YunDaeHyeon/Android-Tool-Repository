@@ -1,21 +1,35 @@
 package com.daehyeon.blutetoothstudy.activity;
 
 import com.daehyeon.blutetoothstudy.R;
+import com.daehyeon.blutetoothstudy.fragment.TimePickerFragment;
+import com.daehyeon.blutetoothstudy.helper.NotificationHelper;
+import com.daehyeon.blutetoothstudy.receiver.AlertReceiver;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.DialogFragment;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.sql.Time;
+import java.text.DateFormat;
+import java.util.Calendar;
 
 /*
     알람 액티비티, 해당 액티비티는 Android 지원 라이브러리의 NotificationCompat API 사용하여 푸시 알림을 구현한다.
@@ -37,41 +51,55 @@ import android.widget.Toast;
     1. 설정 -> 애플리케이션 -> 제작한 어플리케이션 이름 -> 애플리케이션 설정(알림) -> 제작한 채널 이름 -> 팝업으로 표시 ON
 */
 
-public class AlarmActivity extends AppCompatActivity {
+public class AlarmActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
     private final String TAG = "AlarmActivity";
     // 뒤로가기 버튼 설정을 위한 시간
     private long backKeyPressedTime = 0;
+    // 노티피케이션 구현 클래스
+    private NotificationHelper notificationHelper;
+    // 노티피케이션 빌더
+    private NotificationCompat.Builder builder;
 
-    Button basicAlarmButton, backButton;
+    Button basicAlarmButton, backButton, alarmStartButton, alarmCancelButton;
+    TextView settingAlarmText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
-
         basicAlarmButton = (Button) findViewById(R.id.basicAlarmButton);
         backButton = (Button) findViewById(R.id.backButton);
+        alarmStartButton = (Button) findViewById(R.id.alarmStartButton);
+        alarmCancelButton = (Button) findViewById(R.id.alarmCancelButton);
+        settingAlarmText = (TextView) findViewById(R.id.settingAlarmText);
 
-        // 노티피케이션의 채널은 앱 실행될 때(액티비티 실행될 때) 바로 생성되는 것이 좋다.
-        // 첫 번째 인자 (채널 아이디), 두 번째 인자 (채널 이름), 세 번쨰 인자 (채널 우선순위)
-        createNotificationChannel("alarm_channel_id", "기본 채널", NotificationManager.IMPORTANCE_HIGH);
-
-        // 알람 클릭 시 해당 액티비티가 실행될 수 있도록 플래그 설정
-        Intent intent = new Intent(this, AlarmActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        notificationHelper = new NotificationHelper(getApplicationContext());
 
         // 기본 알람 버튼 클릭 리스너
         basicAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 알람 실행
-                createNotification(
-                        "alarm_channel_id",
-                        1,
-                        "기본 알람 제목",
-                        "기본 알람 내용",
-                        intent
-                );
+                // 노티피케이션 빌더에 채널 가져오기
+                builder = notificationHelper.getChannelNotification();
+                notificationHelper.getManager().notify(1, builder.build());
+            }
+        });
+
+        // 알람 설정 버튼 클릭 리스너
+        alarmStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment timePicker = new TimePickerFragment();
+                timePicker.show(getSupportFragmentManager(), "time picker");
+            }
+        });
+
+        // 알람 취소 버튼 클릭 리스너
+        alarmCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelAlarm();
             }
         });
 
@@ -86,44 +114,80 @@ public class AlarmActivity extends AppCompatActivity {
         });
     }
 
-    // 노티피케이션(알림) 채널 만들기
-    private void createNotificationChannel(String channelId, String channelName, int importance){
-        // API 26(오레오) 이상만 채널 만들기
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // 알림 서비스 구현
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(
-                    new NotificationChannel(
-                            channelId, // 채널 ID (중요)
-                            channelName, // 채널 이름
-                            importance // 채널 중요도는 기본으로
-                    )
-            );
+    /*
+        시간을 정하게 되면 onTimeSet이 호출된다.
+        @param view -> 화면
+        @param hourOfDay -> 시간
+        @param minute -> 분
+     */
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        Log.d(TAG, "onTimeSet 호출");
+        // 캘린더 객체 호출
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay); // 시간 설정
+        calendar.set(Calendar.MINUTE, minute); // 분 설정
+        calendar.set(Calendar.SECOND, 0); // 초 설정
+
+        // 화면에 시간 뿌리기
+        updateTimeText(calendar);
+        // 알림 설정
+        startAlarm(calendar);
+    }
+
+    /*
+    사용자가 선택산 시간 뿌리기
+    @param calender -> 시간
+     */
+    private void updateTimeText(Calendar calendar){
+        Log.d(TAG, "updateTimeText 호출");
+        String timeText = "알람 시간 : ";
+        timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
+        settingAlarmText.setText(timeText);
+    }
+
+    /*
+    알람 시작
+    @param calendar -> 시간
+     */
+    private void startAlarm(Calendar calendar){
+        Log.d(TAG, "startAlarm 호출");
+        // 알람매니저 호출 - 시스템 서비스에 알람 서비스 추가
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        // 현재 컨텍스트와 리시버를 인텐트로 전달
+        Intent intent = new Intent(getApplicationContext(), AlertReceiver.class);
+        /*
+        PendingIntent는 intent를 바로 수행하지 않고, 특정 시점에 수행시킨다.
+        이때 특정 시점은 !! 앱이 구동되고 있지 않을 때 !!
+        즉, 알람 매니저를 통해 어플리케이션이 구동되고 있지 않아도 getSystemService로 알람 서비스를 지정하였기에
+        알람 매니저로 지정된 시간에 intent를 수행시킨다.
+        PendingIntent.getBroadcast는 결론적으로 특정 시점에 브로드캐스트 실행
+         */
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, 0);
+        // 만약, 캘린더 객체보다 매개변수로 넘어온 캘린더 객체가 먼저 생성되다면
+        if(calendar.before(Calendar.getInstance())){
+            calendar.add(Calendar.DATE, 1); // 날짜에 하루 추가하기
         }
+        // 알람 매니저로 설정한 시간에 기기의 절전모드를 해제(RTC_WAKEUP)시켜 대기중인 인텐트(PendingIntent)를 실행한다.
+        // setExact 메서드는 지정된 시간에 알람이 전달되도록 예약한다.
+        // setExact(int type, long triggerAtMillis, PendingIntent operation)
+        // 알람 타입, 캘린더에서 설정한 시간을 ms로 변환한 값, 대기중인 인텐트를 인수로 넘긴다.
+        // RTC_WAKEUP를 사용하기 위해서는 퍼미션을 추가해야한다. <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        Toast.makeText(getApplicationContext(), "알람이 설정되었습니다.", Toast.LENGTH_LONG).show();
     }
 
-    // 노티피케이션 만들기
-    private void createNotification(String channelId, int id, String title, String content, Intent intent){
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // 우선순위 설정
-                .setSmallIcon(R.drawable.ic_launcher_foreground) // 작은 아이콘 설정
-                .setContentTitle(title) // 알람 타이틀 지정
-                .setContentText(content) // 알람 내용 지정
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("알람 내용을 더 크게 설정")) // 알람 내용 확장 (필수 X)
-                .setContentIntent(pendingIntent) // 알람 클릭시 지정한 인탠트 실행
-                .setAutoCancel(true) // AutoCancel이 true이면 클릭 시 알람이 삭제된다.
-                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE); // 사운드, 진동 설정
-        // 노티피케이션을 시스템에 등록
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(id, builder.build()); // 알람 빌드
-    }
-
-    // 노티피케이션 파괴
-    private void destroyNotification(int id){
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.cancel(id);
+    /*
+    알람 취소
+     */
+    private void cancelAlarm(){
+        Log.d(TAG, "cancelAlarm 호출");
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getApplicationContext(), AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, 0);
+        alarmManager.cancel(pendingIntent);
+        settingAlarmText.setText("알람이 취소되었습니다.");
+        Toast.makeText(getApplicationContext(), "알람이 취소되었습니다.", Toast.LENGTH_LONG).show();
     }
 
     // 뒤로가기 버튼 설정을 위한 메소드 오버라이딩

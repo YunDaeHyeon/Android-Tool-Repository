@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -43,6 +45,7 @@
         <activity
             android:name=".activity.BluetoothActivity"
             android:exported="true" />
+        <receiver android:name=".receiver.AlertReceiver"/>
     </application>
 
 </manifest>
