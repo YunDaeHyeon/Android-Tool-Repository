@@ -6,6 +6,7 @@
 1. BluetoothAdapter, Thread를 사용한 블루투스 페어링, 검색, 연결
 2. AnimatedSvgView를 사용한 스플래쉬 액티비티 구현 (시작, 로딩화면)
 3. Notification를 이용한 알람 구현
+4. Notification, AlarmManager, Receiver를 이용한 특정 시간 지정 시 알람 울리기
 
 # 2022-09-29 오후 20시 00분 기준 프로젝트 구조
 ```console
