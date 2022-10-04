@@ -24,7 +24,7 @@
     </string-array>
 
     <color name="color">#000000</color>
-    
+
     <integer-array name="rogo_glyph_colors">
         <item>@color/color</item>
         <item>@color/color</item>

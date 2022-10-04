@@ -61,7 +61,7 @@ public class NotificationHelper extends ContextWrapper {
 
     // 노티피케이션 빌드
     public NotificationCompat.Builder getChannelNotification(){
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_IMMUTABLE );
         return new NotificationCompat.Builder(getApplicationContext(), channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground) // 작은 아이콘 설정
                 .setContentTitle("알람") // 알람 타이틀 지정

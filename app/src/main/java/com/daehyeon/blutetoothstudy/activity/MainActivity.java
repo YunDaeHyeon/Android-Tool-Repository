@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 뒤로가기 버튼 설정을 위한 시간
     private long backKeyPressedTime = 0;
 
-    Button bluetoothActivityButton, alarmActivityButton, splashActivityButton;
+    Button bluetoothActivityButton, alarmActivityButton, splashActivityButton, FcmActivityButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +29,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bluetoothActivityButton = (Button) findViewById(R.id.bluetoothActivityButton);
         alarmActivityButton = (Button) findViewById(R.id.alarmActivityButton);
         splashActivityButton = (Button) findViewById(R.id.splashActivityButton);
+        FcmActivityButton = (Button) findViewById(R.id.FcmActivityButton);
 
         bluetoothActivityButton.setOnClickListener(this);
         alarmActivityButton.setOnClickListener(this);
         splashActivityButton.setOnClickListener(this);
+        FcmActivityButton.setOnClickListener(this);
     }
 
     @Override
@@ -51,6 +53,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.splashActivityButton:
                 Intent splashActivityIntent = new Intent(getApplicationContext(), SplashActivity.class);
                 startActivity(splashActivityIntent);
+                finish();
+                break;
+            case R.id.FcmActivityButton:
+                Intent FcmActivityIntent = new Intent(getApplicationContext(), FcmActivity.class);
+                startActivity(FcmActivityIntent);
                 finish();
                 break;
         }

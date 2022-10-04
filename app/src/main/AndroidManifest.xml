@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.daehyeon.blutetoothstudy">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
@@ -24,6 +25,7 @@
         <activity
             android:name=".activity.SplashActivity"
             android:exported="true">
+
             <!-- <intent-filter>를 포함하고 있는 <activity> 태그가 어플리케이션 최초 실행 액티비티. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,21 +33,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.AlarmActivity"
             android:exported="true" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true" />
-
         <activity
             android:name=".activity.PairingActivity"
             android:exported="true" />
         <activity
             android:name=".activity.BluetoothActivity"
             android:exported="true" />
-        <receiver android:name=".receiver.AlertReceiver"/>
+        <activity
+            android:name=".activity.FcmActivity"
+            android:exported="true" />
+
+        <receiver android:name=".receiver.AlertReceiver" />
+        <service android:name=".service.FireBaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
